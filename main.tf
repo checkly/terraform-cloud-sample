@@ -11,4 +11,4 @@ terraform {
 
 provider "checkly" {
   api_key = var.checkly_api_key
-}
+} 
