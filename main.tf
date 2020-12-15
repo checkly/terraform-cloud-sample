@@ -12,3 +12,35 @@ terraform {
 provider "checkly" {
   api_key = var.checkly_api_key
 } 
+
+resource "checkly_check" "webstore-list-books" {
+  name                      = "list-books"
+  type                      = "API"
+  activated                 = true
+  should_fail               = false
+  frequency                 = 1
+  double_check              = true
+  ssl_check                 = true
+  use_global_alert_settings = true
+
+  locations = [
+    "eu-central-1",
+    "us-west-1"
+  ]
+
+  request {
+    url              = "https://danube-webshop.herokuapp.com/api/books"
+    follow_redirects = true
+    assertion {
+      source     = "STATUS_CODE"
+      comparison = "EQUALS"
+      target     = "200"
+    }
+    assertion {
+      source     = "JSON_BODY"
+      property   = "$.length"
+      comparison = "EQUALS"
+      target     = "30"
+    }
+  }
+}
